@@ -1,0 +1,1193 @@
+/* ================================================================== *
+ *  Structura — оформление административного Vue-интерфейса.
+ *  Светлая, лаконичная дизайн-система; всё scoped под .structura.
+ * ================================================================== */
+
+.structura {
+    /* Палитра */
+    --st-accent:        #635bff;
+    --st-accent-ink:    #3f3ab8;
+    --st-accent-strong: #4b45e0;
+    --st-accent-soft:   #eeecff;
+    --st-accent-ring:   rgba(99, 91, 255, .22);
+
+    --st-ink:      #1d2333;
+    --st-ink-soft: #4a5266;
+    --st-muted:    #8a93a6;
+
+    --st-bg:       #ffffff;
+    --st-surface:  #f7f8fc;
+    --st-surface2: #eef1f8;
+    --st-border:   #e4e7f0;
+    --st-border2:  #d7dbe8;
+
+    --st-danger:      #e5484d;
+    --st-danger-soft: #fdeef0;
+    --st-ok:          #2e9e63;
+    --st-ok-soft:     #e7f6ee;
+    /* Предупреждение: сохранено, но не всё (политики доступа). */
+    --st-warn:        #9a6700;
+    --st-warn-soft:   #fff4d6;
+
+    /* Форма */
+    --st-r:    12px;
+    --st-r-sm: 9px;
+    --st-r-xs: 7px;
+    --st-pill: 999px;
+    --st-gap:  14px;
+
+    --st-shadow-sm: 0 1px 2px rgba(20, 24, 40, .05);
+    --st-shadow:    0 4px 14px rgba(20, 24, 40, .07);
+    --st-shadow-lg: 0 10px 30px rgba(20, 24, 40, .12);
+    --st-ease: 160ms cubic-bezier(.4, 0, .2, 1);
+
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--st-ink);
+    max-width: 900px;
+    -webkit-font-smoothing: antialiased;
+}
+
+.structura *,
+.structura *::before,
+.structura *::after { box-sizing: border-box; }
+
+/* ------------------------------------------------------------------ *
+ *  Блок — карточка
+ * ------------------------------------------------------------------ */
+.st-block {
+    position: relative;
+    background: var(--st-bg);
+    border: 1px solid var(--st-border);
+    border-radius: var(--st-r);
+    box-shadow: var(--st-shadow);
+    padding: 20px 22px 18px;
+    margin: 0 0 20px;
+    overflow: hidden;
+}
+.st-block::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--st-accent), #9d7bff 60%, #6ac6ff);
+}
+
+.st-block-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+.st-block-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -.01em;
+}
+.st-block-ver {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--st-accent-ink);
+    background: var(--st-accent-soft);
+    padding: 2px 8px;
+    border-radius: var(--st-pill);
+}
+
+/* Сворачивание карточки блока: вся шапка кликабельна, тело скрывается.
+   Перетаскивание — за ручку (⠿) в шапке, не за всю карточку: иначе клик по
+   шапке не свернул бы блок, а править поля/двигать вложенные строки мешал бы
+   старт drag. */
+.st-block-head { cursor: pointer; user-select: none; }
+.st-block--collapsed .st-block-head { margin-bottom: 0; }
+.st-block-caret {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    color: var(--st-muted);
+    background: var(--st-bg);
+    border: 1px solid var(--st-border2);
+    border-radius: var(--st-r-xs);
+    cursor: pointer;
+    transition: color var(--st-ease), border-color var(--st-ease), background var(--st-ease);
+}
+.st-block-caret:hover { color: var(--st-accent-ink); border-color: var(--st-accent); background: var(--st-accent-soft); }
+.st-caret { line-height: 1; transition: transform var(--st-ease); }
+.st-caret--open { transform: rotate(90deg); }
+/* Результат сохранения в шапке свёрнутого блока (цвет — из .st-message--*). */
+.st-block-msg { font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: var(--st-pill); }
+.st-block-body { animation: st-in var(--st-ease); }
+
+/* ------------------------------------------------------------------ *
+ *  Поле
+ * ------------------------------------------------------------------ */
+.st-field { margin: 0 0 var(--st-gap); }
+
+/* Строка подписи: название + кнопка «?» + раскрытая подсказка (на всю ширину).
+   Отступ снизу держит строка, а не сама подпись, иначе «?» и текст подсказки
+   разъезжались бы по вертикали. */
+.st-label-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+.st-label {
+    display: block;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: .01em;
+    color: var(--st-ink-soft);
+    margin-bottom: 0;
+}
+.st-hint {
+    color: var(--st-muted);
+    font-weight: 500;
+    font-size: 11px;
+    text-transform: lowercase;
+}
+
+/* Подсказка разработчика (Field::help) */
+.st-help-btn {
+    flex: none;
+    width: 16px;
+    height: 16px;
+    padding: 0;
+    font: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--st-muted);
+    background: var(--st-surface2);
+    border: 1px solid var(--st-border2);
+    border-radius: var(--st-pill);
+    cursor: pointer;
+    transition: color var(--st-ease), background var(--st-ease), border-color var(--st-ease);
+}
+.st-help-btn:hover,
+.st-help-btn--on {
+    color: var(--st-accent-ink);
+    background: var(--st-accent-soft);
+    border-color: var(--st-accent);
+}
+.st-help {
+    flex: 0 0 100%;      /* на всю ширину строки, под названием поля */
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--st-ink-soft);
+    background: var(--st-accent-soft);
+    border-left: 2px solid var(--st-accent);
+    border-radius: 0 var(--st-r-xs) var(--st-r-xs) 0;
+    padding: 7px 10px;
+    animation: st-in var(--st-ease);
+}
+
+.st-input {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid var(--st-border2);
+    border-radius: var(--st-r-sm);
+    font: inherit;
+    color: var(--st-ink);
+    background: var(--st-bg);
+    box-shadow: var(--st-shadow-sm);
+    transition: border-color var(--st-ease), box-shadow var(--st-ease), background var(--st-ease);
+}
+.st-input::placeholder { color: var(--st-muted); }
+.st-input:hover { border-color: var(--st-accent); }
+.st-input:focus {
+    outline: none;
+    border-color: var(--st-accent);
+    box-shadow: 0 0 0 3px var(--st-accent-ring);
+}
+select.st-input { cursor: pointer; }
+.st-textarea { resize: vertical; min-height: 76px; line-height: 1.55; }
+
+/* Цвет */
+.st-color { display: inline-flex; gap: 10px; align-items: center; width: 100%; }
+.st-color input[type=color] {
+    width: 46px;
+    height: 40px;
+    padding: 0;
+    border: 1px solid var(--st-border2);
+    border-radius: var(--st-r-sm);
+    background: #fff;
+    cursor: pointer;
+    box-shadow: var(--st-shadow-sm);
+}
+.st-color input[type=color]::-webkit-color-swatch-wrapper { padding: 3px; }
+.st-color input[type=color]::-webkit-color-swatch { border: none; border-radius: 5px; }
+.st-color-text { max-width: 170px; font-variant-numeric: tabular-nums; text-transform: uppercase; }
+
+/* Палитра из ->palette([...]): подсказка, а не ограничение — руками по-прежнему
+   вводится любой цвет. */
+.st-palette { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.st-swatch {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 1px solid var(--st-border2);
+    border-radius: var(--st-r-sm);
+    cursor: pointer;
+    box-shadow: var(--st-shadow-sm);
+}
+.st-swatch:hover { transform: scale(1.1); }
+/* Выбранный обводим снаружи: рамка внутри исказила бы сам цвет. */
+.st-swatch--on { outline: 2px solid var(--st-accent); outline-offset: 1px; }
+
+/* Ссылочные поля с попапом (user, iblockElement): ID + кнопка выбора + сброс */
+.st-ref { display: flex; gap: 8px; align-items: center; }
+.st-ref-id { flex: 1; }
+.st-ref-btn {
+    font: inherit;
+    line-height: 1;
+    height: 40px;
+    min-width: 40px;
+    padding: 0 12px;
+    color: var(--st-ink);
+    background: var(--st-bg);
+    border: 1px solid var(--st-border2);
+    border-radius: var(--st-r-sm);
+    box-shadow: var(--st-shadow-sm);
+    cursor: pointer;
+    transition: color var(--st-ease), border-color var(--st-ease), background var(--st-ease);
+}
+.st-ref-btn:hover { color: var(--st-accent-ink); border-color: var(--st-accent); background: var(--st-accent-soft); }
+.st-ref-btn--clear:hover { color: var(--st-danger); border-color: var(--st-danger); background: var(--st-danger-soft); }
+/* Удаление файла с диска необратимо, поэтому кнопка опасная с самого начала,
+   а не только на hover, — в отличие от «×», который лишь отвязывает файл. */
+.st-ref-btn--destroy { color: var(--st-danger); }
+.st-ref-btn--destroy:hover { border-color: var(--st-danger); background: var(--st-danger-soft); }
+.st-ref-missing { color: var(--st-danger); }
+
+/* Загрузка файла: нативный input прячем — жмут по кнопке */
+.st-file-native { display: none; }
+.st-thumb { display: flex; gap: 10px; align-items: center; margin-top: 8px; }
+.st-thumb img {
+    max-width: 120px;
+    max-height: 90px;
+    border: 1px solid var(--st-border2);
+    border-radius: var(--st-r-xs);
+    background: var(--st-surface);
+}
+
+/* Radio / Checkbox — пилюли */
+.st-radio, .st-checkbox {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 8px 8px 0;
+    padding: 7px 13px;
+    border: 1px solid var(--st-border2);
+    border-radius: var(--st-pill);
+    background: var(--st-bg);
+    box-shadow: var(--st-shadow-sm);
+    cursor: pointer;
+    font-weight: 500;
+    user-select: none;
+    transition: border-color var(--st-ease), background var(--st-ease), color var(--st-ease);
+}
+.st-radio:hover, .st-checkbox:hover { border-color: var(--st-accent); }
+.st-radio:has(input:checked),
+.st-checkbox:has(input:checked) {
+    border-color: var(--st-accent);
+    background: var(--st-accent-soft);
+    color: var(--st-accent-ink);
+}
+.st-radio input, .st-checkbox input {
+    width: 15px;
+    height: 15px;
+    margin: 0;
+    accent-color: var(--st-accent);
+    cursor: pointer;
+}
+
+/* ------------------------------------------------------------------ *
+ *  Контейнеры: Repeater / Flexible
+ * ------------------------------------------------------------------ */
+.st-repeater, .st-flexible, .st-group {
+    position: relative;
+    border: 1px solid var(--st-border);
+    border-radius: var(--st-r);
+    padding: 14px 15px 15px;
+    margin: 0 0 var(--st-gap);
+    background: var(--st-surface);
+}
+.st-flexible { background: var(--st-surface2); }
+
+.st-container-head {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 12px;
+}
+.st-container-head .st-label-row { margin: 0; }
+.st-container-head .st-label { margin: 0; font-size: 13px; color: var(--st-ink); }
+.st-container-head::before {
+    content: "";
+    flex: 0 0 auto;
+    width: 18px;
+    height: 18px;
+    background: center / contain no-repeat;
+}
+.st-repeater > .st-container-head::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23635bff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3l9 5-9 5-9-5 9-5z'/%3E%3Cpath d='M3 12l9 5 9-5'/%3E%3Cpath d='M3 16.5l9 5 9-5'/%3E%3C/svg%3E");
+}
+.st-flexible > .st-container-head::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23635bff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='3' width='8' height='8' rx='1.5'/%3E%3Crect x='13' y='3' width='8' height='8' rx='1.5'/%3E%3Crect x='3' y='13' width='8' height='8' rx='1.5'/%3E%3Crect x='13' y='13' width='8' height='8' rx='1.5'/%3E%3C/svg%3E");
+}
+.st-count {
+    margin-left: auto;
+    min-width: 22px;
+    text-align: center;
+    background: var(--st-accent);
+    color: #fff;
+    border-radius: var(--st-pill);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    box-shadow: var(--st-shadow-sm);
+}
+
+/* Строки / элементы */
+.st-rows, .st-flex-items { display: flex; flex-direction: column; gap: 10px; }
+
+.st-row, .st-flex-item {
+    position: relative;
+    border: 1px solid var(--st-border);
+    border-radius: var(--st-r-sm);
+    background: var(--st-bg);
+    padding: 13px 14px 4px;
+    box-shadow: var(--st-shadow-sm);
+    transition: box-shadow var(--st-ease), border-color var(--st-ease), transform var(--st-ease);
+    animation: st-in 220ms cubic-bezier(.2, .7, .3, 1) both;
+}
+.st-row::before, .st-flex-item::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 12px; bottom: 12px;
+    width: 3px;
+    border-radius: 0 3px 3px 0;
+    background: var(--st-accent);
+    opacity: .5;
+    transition: opacity var(--st-ease);
+}
+.st-row:hover, .st-flex-item:hover {
+    border-color: var(--st-border2);
+    box-shadow: var(--st-shadow);
+}
+.st-row:hover::before, .st-flex-item:hover::before { opacity: 1; }
+.st-flex-item::before { background: linear-gradient(180deg, var(--st-accent), #6ac6ff); }
+
+/* Заголовок строки: подпись слева, кнопки (вверх/вниз/удалить) прижаты вправо.
+   space-between не годится — кнопок несколько, они бы разъехались. */
+.st-row-head {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 700;
+    font-size: 11.5px;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    color: var(--st-muted);
+    margin-bottom: 10px;
+}
+.st-row-head .st-move:first-of-type { margin-left: auto; }
+
+/* Перетаскивание для смены порядка (карточки блоков и строки контейнеров).
+   Кнопки ↑/↓ остаются рядом — это запасной и клавиатурный путь. */
+.st-drag-handle {
+    cursor: grab;
+    color: var(--st-muted);
+    font-size: 14px;
+    line-height: 1;
+    padding: 0 4px;
+    user-select: none;
+    border-radius: var(--st-r-xs);
+    transition: color var(--st-ease), background var(--st-ease);
+}
+.st-drag-handle:hover { color: var(--st-accent-ink); background: var(--st-accent-soft); }
+.st-drag-handle:active { cursor: grabbing; }
+.st-drag-handle[draggable="false"] { opacity: .4; cursor: default; }
+
+/* Перетаскиваемый элемент приглушён; цель — линия вставки сверху (inset-тень,
+   базовую тень сохраняем вторым слоем, чтобы карточка не «плющилась»). */
+.st-dragging { opacity: .45; }
+.st-block.st-drag-over,
+.st-row.st-drag-over,
+.st-flex-item.st-drag-over {
+    border-color: var(--st-accent);
+    box-shadow: inset 0 3px 0 var(--st-accent), var(--st-shadow);
+}
+
+/* ------------------------------------------------------------------ *
+ *  Панель добавления блоков (пикер) и управление экземплярами
+ * ------------------------------------------------------------------ */
+.st-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+.st-toolbar-note { font-size: 12px; color: var(--st-muted); }
+.st-add-block {
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 16px;
+    color: var(--st-bg);
+    background: var(--st-accent);
+    border: 1px solid var(--st-accent);
+    border-radius: var(--st-r-sm);
+    cursor: pointer;
+    box-shadow: var(--st-shadow-sm);
+    transition: background var(--st-ease), border-color var(--st-ease);
+}
+.st-add-block:hover { background: var(--st-accent-strong); border-color: var(--st-accent-strong); }
+.st-add-block--on {
+    color: var(--st-ink-soft);
+    background: var(--st-surface2);
+    border-color: var(--st-border2);
+}
+.st-collapse-all {
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 12px;
+    margin-left: auto;
+    color: var(--st-ink-soft);
+    background: var(--st-bg);
+    border: 1px solid var(--st-border2);
+    border-radius: var(--st-r-sm);
+    cursor: pointer;
+    transition: color var(--st-ease), border-color var(--st-ease), background var(--st-ease);
+}
+.st-collapse-all:hover { color: var(--st-accent-ink); border-color: var(--st-accent); background: var(--st-accent-soft); }
+
+.st-picker {
+    margin-bottom: 18px;
+    border: 1px solid var(--st-border);
+    border-radius: var(--st-r-sm);
+    background: var(--st-surface);
+    overflow: hidden;
+    animation: st-in var(--st-ease);
+}
+.st-picker-head {
+    padding: 10px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    color: var(--st-ink-soft);
+    background: var(--st-surface2);
+    border-bottom: 1px solid var(--st-border);
+}
+.st-picker-list {
+    list-style: none;
+    margin: 0;
+    padding: 8px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 8px;
+}
+.st-picker-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    font: inherit;
+    font-size: 13px;
+    text-align: left;
+    padding: 10px 12px;
+    color: var(--st-ink);
+    background: var(--st-bg);
+    border: 1px solid var(--st-border2);
+    border-radius: var(--st-r-sm);
+    cursor: pointer;
+    transition: border-color var(--st-ease), background var(--st-ease);
+}
+.st-picker-item:hover:not([disabled]) { border-color: var(--st-accent); background: var(--st-accent-soft); }
+.st-picker-item[disabled] { opacity: .5; cursor: default; }
+.st-picker-name { font-weight: 600; }
+.st-picker-badge {
+    margin-left: auto;
+    flex: none;
+    font-size: 10.5px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: var(--st-pill);
+    color: var(--st-accent-ink);
+    background: var(--st-accent-soft);
+}
+.st-picker-badge--off { color: var(--st-muted); background: var(--st-surface2); }
+
+/* Секции пикера: блоки сгруппированы по папкам-группам (.group.php).
+   Заголовок — вся цепочка групп («Маркетинг → Промо-акции»), поэтому
+   вложенность видна без отступов. */
+.st-picker-group + .st-picker-group { border-top: 1px solid var(--st-border); }
+.st-picker-group-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px 0;
+}
+.st-picker-group-name {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--st-ink-soft);
+}
+/* Пометка unique-группы: из неё можно взять только один блок. */
+.st-picker-badge--one {
+    margin-left: 0;
+    color: var(--st-ink-soft);
+    background: var(--st-surface2);
+}
+.st-picker-badge--req { color: var(--st-warn); background: var(--st-warn-soft); }
+
+/* Обязательные блоки, которых нет.
+   Тон предупреждающий, а не ошибочный, и это не оплошность оформления:
+   сохранению плашка не мешает, блок можно так и не добавить. Красный обещал бы
+   запрет, которого нет. */
+.st-required-note {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    padding: 10px 14px;
+    font-size: 12.5px;
+    color: var(--st-warn);
+    background: var(--st-warn-soft);
+    border-radius: var(--st-r-sm);
+}
+.st-required-note-text { font-weight: 600; }
+
+/* Значения блоков без конфигурации. Отдельно от st-required-note: тот про
+   «добавьте блок» и предлагает кнопку, этот — про данные, которых не видно, и
+   действий у пользователя тут нет, только объяснение. */
+.st-orphan-note {
+    margin-bottom: 16px;
+    padding: 10px 14px;
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--st-danger);
+    background: var(--st-danger-soft);
+    border-radius: var(--st-r-sm);
+}
+.st-orphan-list { margin: 6px 0; padding-left: 20px; }
+.st-orphan-list code { font-size: 12px; }
+.st-required-add {
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    color: var(--st-warn);
+    background: var(--st-bg);
+    border: 1px solid currentColor;
+    border-radius: var(--st-pill);
+    cursor: pointer;
+    transition: background var(--st-ease);
+}
+.st-required-add:hover { background: var(--st-warn-soft); }
+
+/* «не сохранён» — экземпляр добавлен, но ещё не отправлен на сервер. */
+.st-block-new {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: var(--st-pill);
+    color: var(--st-danger);
+    background: var(--st-danger-soft);
+}
+/* «Изменён» — у сохранённого экземпляра есть неотправленные правки. */
+.st-block-dirty {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: var(--st-pill);
+    color: var(--st-warn);
+    background: var(--st-warn-soft);
+}
+/* «выключен»/«вне дат» — экземпляр не показывается на сайте. Видно и у
+   свёрнутой карточки, поэтому пилюлей в шапке, приглушённого тона. */
+.st-block-off {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: var(--st-pill);
+    color: var(--st-muted);
+    background: var(--st-surface2);
+}
+
+/* Метка активного языка в шапке — видна и у свёрнутой карточки. */
+.st-block-lang {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: var(--st-pill);
+    color: var(--st-accent-ink);
+    background: var(--st-accent-soft);
+}
+
+/* Языковые вкладки переводимого блока — первой строкой тела карточки:
+   вкладка выбирает строку хранения, поэтому стоит выше всего остального. */
+.st-langs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--st-border);
+}
+.st-lang {
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    padding: 4px 12px;
+    color: var(--st-ink-soft);
+    background: var(--st-bg);
+    border: 1px solid var(--st-border2);
+    border-radius: var(--st-pill);
+    cursor: pointer;
+    transition: color var(--st-ease), border-color var(--st-ease), background var(--st-ease);
+}
+.st-lang:hover:not([disabled]) { color: var(--st-accent-ink); border-color: var(--st-accent); }
+.st-lang--on {
+    color: var(--st-accent-ink);
+    background: var(--st-accent-soft);
+    border-color: var(--st-accent);
+}
+.st-lang[disabled] { opacity: .45; cursor: default; }
+/* Точка — «перевода ещё нет». Тона предупреждения: это не ошибка, но и не
+   норма, сайт на этом языке покажет язык по умолчанию. */
+.st-lang--empty { color: var(--st-warn); }
+.st-lang-mark { margin-left: 4px; font-size: 14px; line-height: 1; vertical-align: middle; }
+.st-lang-note { font-size: 12px; color: var(--st-muted); }
+
+/* Плашка пустого перевода с кнопкой «заполнить из базы». */
+.st-lang-empty {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+    margin-bottom: 16px;
+    padding: 10px 14px;
+    border-radius: var(--st-r-sm);
+    background: var(--st-warn-soft);
+    color: var(--st-warn);
+    font-size: 12.5px;
+}
+.st-lang-prefill {
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 12px;
+    color: var(--st-ink-soft);
+    background: var(--st-bg);
+    border: 1px solid var(--st-border2);
+    border-radius: var(--st-r-sm);
+    cursor: pointer;
+}
+.st-lang-prefill:hover:not([disabled]) { color: var(--st-accent-ink); border-color: var(--st-accent); }
+.st-lang-prefill[disabled] { opacity: .45; cursor: default; }
+
+/* Панель активности: переключатель + окно дат, вверху тела карточки. */
+.st-activity {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 16px;
+    margin-bottom: 16px;
+    padding: 10px 12px;
+    border: 1px solid var(--st-border);
+    border-radius: var(--st-radius, 8px);
+    background: var(--st-surface2);
+    font-size: 13px;
+}
+.st-activity-flag { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; }
+.st-activity-date { display: inline-flex; align-items: center; gap: 6px; color: var(--st-ink-soft); }
+.st-activity-date input { font: inherit; }
+.st-activity-hint { color: var(--st-muted); }
+
+/* Подпись «создал/изменил» — второстепенная: приглушённая, ужимается и
+   обрезается, чтобы не теснить заголовок и кнопки в шапке. */
+.st-block-author {
+    font-size: 11px;
+    color: var(--st-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+    max-width: 45%;
+}
+.st-block-acts { display: flex; gap: 4px; margin-left: auto; }
+.st-move, .st-remove-block {
+    font: inherit;
+    font-size: 12px;
+    line-height: 1;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    color: var(--st-muted);
+    background: var(--st-bg);
+    border: 1px solid var(--st-border2);
+    border-radius: var(--st-r-xs);
+    cursor: pointer;
+    transition: color var(--st-ease), border-color var(--st-ease), background var(--st-ease);
+}
+.st-move:hover:not([disabled]) { color: var(--st-accent-ink); border-color: var(--st-accent); background: var(--st-accent-soft); }
+.st-move[disabled] { opacity: .4; cursor: default; }
+.st-remove-block:hover { color: var(--st-danger); border-color: var(--st-danger); background: var(--st-danger-soft); }
+
+/* Кнопки */
+.st-add, .st-save {
+    font: inherit;
+    font-weight: 600;
+    border-radius: var(--st-r-sm);
+    cursor: pointer;
+    transition: background var(--st-ease), border-color var(--st-ease),
+                box-shadow var(--st-ease), transform var(--st-ease), color var(--st-ease);
+}
+.st-add {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin: 2px 8px 0 0;
+    padding: 8px 14px;
+    color: var(--st-accent-ink);
+    background: var(--st-bg);
+    border: 1px dashed var(--st-border2);
+}
+.st-add:hover {
+    color: var(--st-accent-strong);
+    border-color: var(--st-accent);
+    background: var(--st-accent-soft);
+}
+.st-add:active { transform: translateY(1px); }
+
+.st-save {
+    padding: 10px 22px;
+    color: #fff;
+    border: 0;
+    background: linear-gradient(180deg, #6f68ff, var(--st-accent-strong));
+    box-shadow: 0 4px 12px var(--st-accent-ring);
+}
+.st-save:hover { box-shadow: 0 6px 18px var(--st-accent-ring); transform: translateY(-1px); }
+.st-save:active { transform: translateY(0); box-shadow: var(--st-shadow-sm); }
+.st-save[disabled] { opacity: .55; cursor: default; box-shadow: none; transform: none; }
+
+.st-remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--st-muted);
+    font-size: 13px;
+    line-height: 1;
+    cursor: pointer;
+    opacity: .55;
+    transition: background var(--st-ease), color var(--st-ease), opacity var(--st-ease);
+}
+.st-row:hover .st-remove, .st-flex-item:hover .st-remove { opacity: 1; }
+.st-remove:hover { background: var(--st-danger-soft); color: var(--st-danger); }
+
+.st-flex-add { display: flex; flex-wrap: wrap; gap: 2px; margin-top: 4px; }
+
+/* Пустое состояние */
+.st-empty {
+    padding: 16px;
+    border: 1px dashed var(--st-border2);
+    border-radius: var(--st-r-sm);
+    text-align: center;
+    color: var(--st-muted);
+    font-size: 12.5px;
+    margin-bottom: 10px;
+    background: rgba(255, 255, 255, .5);
+}
+
+/* Действия и сообщения */
+.st-actions {
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid var(--st-border);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.st-message {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: var(--st-pill);
+    animation: st-in 200ms ease both;
+}
+.st-message::before { content: ""; width: 14px; height: 14px; background: center/contain no-repeat; }
+.st-message--ok { color: var(--st-ok); background: var(--st-ok-soft); }
+.st-message--ok::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232e9e63' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6L9 17l-5-5'/%3E%3C/svg%3E");
+}
+.st-message--error { color: var(--st-danger); background: var(--st-danger-soft); }
+.st-message--error::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e5484d' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='18' y1='6' x2='6' y2='18'/%3E%3Cline x1='6' y1='6' x2='18' y2='18'/%3E%3C/svg%3E");
+}
+
+.st-message--warn { color: var(--st-warn); background: var(--st-warn-soft); }
+.st-message--warn::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239a6700' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 9v4'/%3E%3Cpath d='M12 17h.01'/%3E%3Cpath d='M10.3 3.9L2 18a2 2 0 0 0 1.7 3h16.6a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z'/%3E%3C/svg%3E");
+}
+
+/* ------------------------------------------------------------------ *
+ *  Справочник с поиском (structura-lookup)
+ * ------------------------------------------------------------------ */
+.st-lookup-value {
+    flex: 1;
+    min-width: 0;
+    padding: 7px 10px;
+    border: 1px solid var(--st-border);
+    border-radius: var(--st-r-sm);
+    background: var(--st-surface);
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.st-lookup-value--empty { color: var(--st-muted); }
+.st-lookup-id { color: var(--st-muted); font-size: 12px; }
+
+.st-lookup-panel {
+    margin-top: 6px;
+    padding: 8px;
+    border: 1px solid var(--st-border);
+    border-radius: var(--st-r-sm);
+    background: var(--st-bg);
+}
+.st-lookup-search { margin-bottom: 6px; }
+
+/* Список ограничен по высоте: страница — 50 строк, дальше «Показать ещё». */
+.st-lookup-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 260px;
+    overflow-y: auto;
+}
+.st-lookup-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+    padding: 6px 8px;
+    border: 0;
+    border-radius: var(--st-r-xs);
+    background: transparent;
+    text-align: left;
+    font-size: 13px;
+    cursor: pointer;
+}
+.st-lookup-item:hover { background: var(--st-surface2); }
+.st-lookup-item--on { background: var(--st-accent-soft); font-weight: 600; }
+.st-lookup-more {
+    width: 100%;
+    margin-top: 6px;
+    padding: 6px;
+    border: 1px dashed var(--st-border2);
+    border-radius: var(--st-r-xs);
+    background: transparent;
+    color: var(--st-ink-soft);
+    font-size: 12.5px;
+    cursor: pointer;
+}
+.st-lookup-more:hover { border-color: var(--st-accent); color: var(--st-accent); }
+
+/* ------------------------------------------------------------------ *
+ *  Политики доступа: заблокированные поля и блоки
+ * ------------------------------------------------------------------ */
+
+/* Блокирует <fieldset disabled> — он нативно гасит все контролы внутри, каким
+   бы шаблоном поле ни рисовалось (в том числе у сторонних полей). Здесь только
+   снимаем дефолтный вид fieldset, чтобы вёрстка не поехала. */
+.st-locked,
+.st-locked-block {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    min-width: 0;   /* иначе fieldset не даёт flex/grid сжиматься */
+}
+
+/* У заблокированного поля значение остаётся видимым (политика — это право
+   править, а не смотреть), но выглядит неактивным. */
+.st-locked .st-input,
+.st-locked-block[disabled] .st-input {
+    background: var(--st-surface);
+    color: var(--st-ink-soft);
+    cursor: not-allowed;
+}
+
+.st-lock {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 6px;
+    padding: 4px 10px;
+    border-radius: var(--st-pill);
+    background: var(--st-warn-soft);
+    color: var(--st-warn);
+    font-size: 12px;
+    font-weight: 600;
+}
+.st-lock-icon { font-size: 11px; line-height: 1; }
+.st-lock-text { font-weight: 500; }
+
+/* ------------------------------------------------------------------ *
+ *  Валидация
+ * ------------------------------------------------------------------ */
+.st-invalid > .st-input,
+.st-invalid > .st-color > .st-input,
+.st-invalid > .st-textarea {
+    border-color: var(--st-danger);
+    box-shadow: 0 0 0 3px var(--st-danger-soft);
+}
+.st-invalid > .st-label { color: var(--st-danger); }
+.st-repeater.st-invalid, .st-flexible.st-invalid, .st-group.st-invalid { border-color: var(--st-danger); }
+.st-field.st-invalid { animation: st-shake 320ms cubic-bezier(.36, .07, .19, .97) both; }
+
+.st-errors { margin-top: 6px; display: flex; flex-direction: column; gap: 2px; }
+.st-errors span {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--st-danger);
+    font-size: 11.5px;
+    font-weight: 500;
+}
+.st-errors span::before {
+    content: "";
+    flex: 0 0 auto;
+    width: 13px;
+    height: 13px;
+    background: center/contain no-repeat;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e5484d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z'/%3E%3Cline x1='12' y1='9' x2='12' y2='13'/%3E%3Cline x1='12' y1='17' x2='12.01' y2='17'/%3E%3C/svg%3E");
+}
+
+/* ------------------------------------------------------------------ *
+ *  Анимации
+ * ------------------------------------------------------------------ */
+@keyframes st-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes st-shake {
+    10%, 90% { transform: translateX(-1px); }
+    20%, 80% { transform: translateX(2px); }
+    30%, 50%, 70% { transform: translateX(-4px); }
+    40%, 60% { transform: translateX(4px); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .structura *, .structura *::before { animation: none !important; transition: none !important; }
+}
+
+/* ------------------------------------------------------------------ *
+ *  История ревизий и откат
+ * ------------------------------------------------------------------ */
+.st-history-btn {
+    font: inherit;
+    font-weight: 600;
+    padding: 9px 16px;
+    color: var(--st-accent-ink);
+    background: var(--st-bg);
+    border: 1px solid var(--st-border2);
+    border-radius: var(--st-r-sm);
+    cursor: pointer;
+    box-shadow: var(--st-shadow-sm);
+    transition: border-color var(--st-ease), background var(--st-ease),
+                box-shadow var(--st-ease), transform var(--st-ease);
+}
+.st-history-btn:hover { border-color: var(--st-accent); background: var(--st-accent-soft); }
+.st-history-btn--on { border-color: var(--st-accent); background: var(--st-accent-soft); }
+
+.st-history {
+    margin-top: 14px;
+    border: 1px solid var(--st-border);
+    border-radius: var(--st-r-sm);
+    background: var(--st-surface);
+    overflow: hidden;
+    animation: st-in var(--st-ease);
+}
+.st-history-head {
+    padding: 10px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    color: var(--st-ink-soft);
+    background: var(--st-surface2);
+    border-bottom: 1px solid var(--st-border);
+}
+/* Список ограничен по высоте и скроллится внутри: страница редактирования
+   элемента не должна разъезжаться из-за длинной истории. Догрузка — по кнопке
+   «Показать ещё» (см. REV_PAGE_SIZE в structura.js). */
+.st-history-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 420px;
+    overflow-y: auto;
+}
+.st-history-more {
+    padding: 10px 14px;
+    border-top: 1px solid var(--st-border);
+    background: var(--st-surface2);
+    text-align: center;
+}
+.st-more {
+    font: inherit;
+    font-size: 12.5px;
+    font-weight: 600;
+    padding: 6px 16px;
+    color: var(--st-ink-soft);
+    background: var(--st-bg);
+    border: 1px solid var(--st-border2);
+    border-radius: var(--st-r-sm);
+    cursor: pointer;
+    transition: border-color var(--st-ease), color var(--st-ease), background var(--st-ease);
+}
+.st-more:hover { border-color: var(--st-accent); color: var(--st-accent-ink); background: var(--st-accent-soft); }
+.st-more[disabled] { opacity: .55; cursor: default; }
+/* Элемент истории — строка с мета-данными плюс раскрываемый предпросмотр. */
+.st-history-item {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--st-border);
+}
+.st-history-item:last-child { border-bottom: 0; }
+.st-history-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+.st-history-acts { display: flex; flex: none; gap: 8px; }
+.st-history-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 10px;
+    min-width: 0;
+}
+/* Номер ревизии: на него ссылается комментарий отката («Откат к ревизии #12»),
+   поэтому он должен быть заметен и легко сопоставим глазами. */
+.st-history-id {
+    font-size: 12px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--st-ink-soft);
+    background: var(--st-surface2);
+    border: 1px solid var(--st-border);
+    padding: 1px 7px;
+    border-radius: var(--st-pill);
+}
+.st-history-date { font-size: 13px; font-weight: 600; color: var(--st-ink); }
+.st-history-user { font-size: 12px; color: var(--st-muted); }
+.st-history-comment {
+    font-size: 12px;
+    color: var(--st-accent-ink);
+    background: var(--st-accent-soft);
+    padding: 2px 8px;
+    border-radius: var(--st-pill);
+}
+.st-rollback {
+    flex: none;
+    font: inherit;
+    font-size: 12.5px;
+    font-weight: 600;
+    padding: 6px 14px;
+    color: var(--st-ink-soft);
+    background: var(--st-bg);
+    border: 1px solid var(--st-border2);
+    border-radius: var(--st-r-sm);
+    cursor: pointer;
+    box-shadow: var(--st-shadow-sm);
+    transition: border-color var(--st-ease), color var(--st-ease),
+                background var(--st-ease), transform var(--st-ease);
+}
+.st-rollback:hover { border-color: var(--st-accent); color: var(--st-accent-ink); background: var(--st-accent-soft); }
+.st-rollback:active { transform: translateY(1px); }
+.st-rollback[disabled] { opacity: .55; cursor: default; }
+
+/* Кнопка предпросмотра — вторичная рядом с «Откатить». */
+.st-preview {
+    flex: none;
+    font: inherit;
+    font-size: 12.5px;
+    padding: 6px 12px;
+    color: var(--st-muted);
+    background: transparent;
+    border: 1px solid var(--st-border2);
+    border-radius: var(--st-r-sm);
+    cursor: pointer;
+    transition: border-color var(--st-ease), color var(--st-ease), background var(--st-ease);
+}
+.st-preview:hover { color: var(--st-ink); border-color: var(--st-accent); }
+.st-preview--on {
+    color: var(--st-accent-ink);
+    background: var(--st-accent-soft);
+    border-color: var(--st-accent);
+}
+
+/* ------------------------------------------------------------------ *
+ *  Предпросмотр отката: разница «сейчас → после»
+ * ------------------------------------------------------------------ */
+.st-diff {
+    margin-top: 10px;
+    border: 1px solid var(--st-border);
+    border-radius: var(--st-r-sm);
+    background: var(--st-bg);
+    overflow-x: auto;
+    animation: st-in var(--st-ease);
+}
+.st-diff-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.st-diff-table th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .02em;
+    color: var(--st-muted);
+    background: var(--st-surface2);
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--st-border);
+    white-space: nowrap;
+}
+.st-diff-table td {
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--st-border);
+    vertical-align: top;
+    word-break: break-word;
+}
+.st-diff-table tr:last-child td { border-bottom: 0; }
+.st-diff-label { color: var(--st-ink-soft); font-weight: 600; white-space: nowrap; }
+/* Слева — что есть сейчас (уйдёт), справа — что придёт из ревизии. */
+.st-diff-from { color: var(--st-muted); text-decoration: line-through; }
+.st-diff-to   { color: var(--st-ink); font-weight: 600; }
+/* Полоса слева кодирует характер изменения. */
+.st-diff--add    td:first-child { box-shadow: inset 3px 0 0 var(--st-ok); }
+.st-diff--remove td:first-child { box-shadow: inset 3px 0 0 var(--st-danger); }
+.st-diff--change td:first-child { box-shadow: inset 3px 0 0 var(--st-accent); }

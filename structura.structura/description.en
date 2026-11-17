@@ -1,0 +1,38 @@
+<b>Structura</b><br>
+<br>
+A 1C-Bitrix module for custom properties: field blocks that can be attached to information blocks, their elements, and sections.<br>
+<br>
+Information block properties are flat: a string, a number, or a list. Structura lets you describe composite structures, such as a banner with a caption, image, and background colour, stores their values as JSON, and adds an editing form to the administrative area.<br>
+<br>
+<b>Features</b><br>
+<ul>
+<li>26 field types: text, numbers, dates, lists, colours, files and images, media library items, and links to elements, sections, information blocks, highload rows, and users.</li>
+<li>Unlimited nesting of repeating rows and layouts.</li>
+<li>Built-in and custom value validation.</li>
+<li>Editing restrictions for blocks and individual fields by groups, users, and custom rules.</li>
+<li>Change history, revision limits, and value rollback.</li>
+<li>Multiple instances of the same block on one entity.</li>
+<li>Block groups and mutually exclusive blocks.</li>
+<li>A public API for reading and writing values from site code.</li>
+<li>Events for adding, updating, and deleting fields.</li>
+<li>Automatic value copying when an element is copied, and removal of values, translations, history, and uploaded files when the element is deleted.</li>
+</ul>
+<br>
+Block configuration is not stored in the database: it is described in files and versioned together with the project. Only values are stored in the database.<br>
+<br>
+<b>Installation</b><br>
+<ul>
+<li>Install the module from Marketplace → Installed solutions → Structura.</li>
+</ul>
+The installer creates value and revision tables, deploys a configuration template and a blocks directory, and registers event handlers.<br>
+<br>
+<b>Quick start</b><br>
+<ul>
+<li>Grant users access to the Structura module. Level R allows working with blocks on element and section forms; level W also grants access to module settings.</li>
+<li>Create a block configuration file in /local/php_interface/structura/blocks/. The directory name defines the block code; no additional registration is required.</li>
+<li>Open an information block element form, add a block on the Structura tab, and save the values.</li>
+<li>Output values on the site through the public Structura\Structura\Blocks API.</li>
+</ul>
+<br>
+<b>Requirements</b><br>
+PHP 8.0 or higher; 1C-Bitrix with the Information Blocks module. No external dependencies are required.<br>
